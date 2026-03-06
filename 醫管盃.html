@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IM CUP 醫管盃</title>
+<style>
+:root {
+  --blue: #1a1e2e;
+  --red: #5f5250;
+  --card: #e6d5c8;
+  --light: #f6f6f6;
+  --dark: #1a1e2e; 
+}
+
+* { box-sizing: border-box; font-family: "Segoe UI", "Noto Sans TC", sans-serif; }
+
+body {
+  margin: 0;
+  background-color: var(--blue); 
+  color: #222;
+}
+
+/* ===== Toolbar ===== */
+.toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px 40px;
+  background: rgba(41, 46, 70, 0.95);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+  min-height: 90px;
+  position: relative;
+}
+
+.brand-container {
+  position: absolute;
+  left: 30px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.logo-img {
+  width: 70px;  
+  height: 70px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--card);
+  background: white;
+  box-shadow: 0 0 10px rgba(255,255,255,0.2);
+}
+
+.brand-text {
+  display: flex;
+  flex-direction: column;
+  color: var(--card); 
+  line-height: 1.2;
+}
+
+.text-main {
+  font-size: 18px;
+  font-weight: 900;
+  letter-spacing: 1px;
+}
+
+.text-sub {
+  font-size: 13px;
+  font-weight: 400;
+  opacity: 0.9;
+}
+
+sup {
+  font-size: 0.6em;
+  vertical-align: super;
+}
+
+.toolbar button {
+  background: var(--card);
+  border: none;
+  padding: 12px 22px;
+  margin: 0 6px;
+  border-radius: 25px;
+  font-weight: 800;
+  font-size: 16px; 
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: var(--blue);
+}
+
+.toolbar button:hover {
+  transform: translateY(-3px);
+  filter: brightness(1.1);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.toolbar button.active {
+  background: var(--red);
+  color: #fff;
+  transform: scale(1.05);
+}
+
+.dept-tag {
+  position: absolute;
+  right: 20px;
+  bottom: 8px;
+  color: var(--card);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  opacity: 0.8;
+}
+
+@media(max-width: 900px){
+  .brand-container { position: static; margin-bottom: 10px; }
+  .toolbar { 
+    padding: 15px; 
+    flex-direction: column; 
+    min-height: auto;
+  }
+  .logo-img { width: 55px; height: 55px; }
+  .brand-text { align-items: center; }
+  .dept-tag { display: none; }
+}
+
+/* ===== Page ===== */
+.page{display:none;padding:30px;}
+.page.active{display:block;}
+
+.hero {
+  text-align: center;
+  padding-top: 60px;
+  padding-bottom: 120px; 
+  min-height: 120vh;    
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* 直角中空框樣式 */
+.intro-box {
+  background-color: transparent; 
+  border: 4px solid var(--card); 
+  border-radius: 0;            
+  padding: 50px 40px;
+  max-width: 850px;
+  width: 90%;
+  margin: 30px auto;
+  position: relative;
+  box-shadow: 8px 8px 0px rgba(0, 0, 0, 0.3); 
+}
+
+.intro-box h2 {
+  font-size: 42px;
+  margin-top: 0;
+  margin-bottom: 30px;
+  letter-spacing: 5px; /* 增加字距，更有大賽氣勢 */
+  color: var(--card);
+  font-weight: 900;
+}
+
+.intro-box p {
+  font-size: 18px;
+  line-height: 2; /* 增加行高，讓閱讀更舒適 */
+  margin: 8px 0;
+  color: var(--card) !important;
+  opacity: 1 !important;
+  font-weight: 500;
+}
+
+/* 為了讓直角框不顯得太呆板，我們可以讓按鈕也維持直角風格 */
+.hero .sticker {
+  margin-top: 50px;
+  border: 2px solid var(--card);
+}
+
+.card{
+  background: rgba(230, 213, 200, 1.0);
+  border-radius:18px;
+  padding:24px;
+  max-width:900px;
+  margin:24px auto;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  transform:rotate(0deg);
+}
+
+.ticket{
+  background:var(--card);
+  border-radius:18px;
+  padding:24px;
+  max-width:900px;
+  margin:auto;
+  position:relative;
+  box-shadow:0 12px 0 rgba(0,0,0,.2);
+}
+.ticket:before,.ticket:after{
+  content:"";
+  position:absolute;top:50%;
+  width:22px;height:22px;
+  background:var(--blue);
+  border-radius:50%;
+}
+.ticket:before{left:-11px;}
+.ticket:after{right:-11px;}
+.ticket hr{
+  border:none;border-top:2px dashed var(--dark);
+  margin:20px 0;
+}
+
+.sticker{
+  display:inline-block;
+  background:var(--red);
+  color:#fff;
+  padding:14px 28px;
+  border-radius:14px;
+  font-weight:900;
+  letter-spacing:2px;
+  cursor:pointer;
+  animation:blink 1.8s infinite;
+}
+@keyframes blink{
+  0%,100%{transform:rotate(-5deg) scale(1);}
+  50%{transform:rotate(5deg) scale(1.08);}
+}
+
+.swipe-hint{
+  text-align:center;
+  font-size:14px;
+  color:var(--dark);
+  margin-bottom:10px;
+}
+
+.swipe-box{
+  position:relative;
+  max-height:140px;
+  overflow:hidden;
+  transition:1s;
+}
+.swipe-box.open{
+  max-height:1600px;
+}
+
+.swipe-lock{
+  position:absolute;
+  inset:0;
+  background:rgba(230,213,200,.96);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:900;
+  letter-spacing:3px;
+  z-index:10;
+  transition:.6s;
+}
+.swipe-box.open .swipe-lock{
+  opacity:0;
+  pointer-events:none;
+}
+
+iframe{width:100%;border:none;}
+
+@media(min-width:768px){
+  .swipe-lock{display:none;}
+  .swipe-box{max-height:none;}
+}
+
+/* 大會資訊專用佈局 */
+.info-container {
+  display: flex;
+  gap: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  align-items: flex-start;
+}
+
+/* 左側直式選單 */
+.info-sidebar {
+  display: flex;
+  flex-direction: column;
+  width: 200px;
+  background: rgba(230, 213, 200, 0.8); /* 與卡片相同的透明米色 */
+  border-radius: 0; /* 強制直角 */
+  overflow: hidden;
+  box-shadow: 5px 5px 0px rgba(0,0,0,0.2);
+}
+
+.info-sidebar button {
+  background: transparent;
+  border: none;
+  padding: 15px 20px;
+  color: var(--blue);
+  font-weight: 800;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.3s;
+  border-bottom: 1px solid rgba(26, 30, 46, 0.1);
+  font-size: 16px;
+}
+
+.info-sidebar button:last-child { border-bottom: none; }
+
+.info-sidebar button:hover {
+  background: rgba(26, 30, 46, 0.05);
+}
+
+.info-sidebar button.active {
+  background: var(--red);
+  color: #fff;
+}
+
+/* 右側內容區 */
+.info-content {
+  flex: 1;
+  margin: 0; /* 移除原本 card 的 margin */
+}
+
+/* 內容子頁面顯示控制 */
+.sub-page { display: none; }
+.sub-page.active { display: block; }
+
+@media(max-width: 768px) {
+  .info-container { flex-direction: column; }
+  .info-sidebar { width: 100%; flex-direction: row; overflow-x: auto; }
+}
+
+/* 規章內容美化 */
+.contest-sub-page h3 {
+  color: var(--red);
+  border-left: 5px solid var(--red);
+  padding-left: 10px;
+  margin-top: 30px;
+}
+
+.contest-sub-page h4 {
+  color: var(--blue);
+  background: rgba(26, 30, 46, 0.05);
+  padding: 5px 10px;
+  border-radius: 4px;
+}
+
+.contest-sub-page ul, .contest-sub-page ol {
+  line-height: 1.8;
+  padding-left: 20px;
+}
+
+.last-update {
+  font-size: 13px;
+  color: #666;
+  font-style: italic;
+  margin-bottom: 20px;
+}
+
+.important-note {
+  background: #fff3f3;
+  border: 1px dashed var(--red);
+  padding: 15px;
+  margin: 15px 0;
+  color: #a00;
+}
+
+/* 預設隱藏所有競賽子分頁 */
+.contest-sub-page {
+  display: none;
+}
+
+/* 只有加上 active 的才顯示 */
+.contest-sub-page.active {
+  display: block;
+}
+</style>
+</head>
+<body>
+
+<!-- TOOLBAR -->
+<div class="toolbar">
+  <div class="brand-container">
+    <img src="醫管盃最終logo.jpg" alt="LOGO" class="logo-img">
+    <div class="brand-text">
+      <span class="text-main">第28屆醫管盃</span>
+      <span class="text-sub">HCA GAME 28<sup>TH</sup></span>
+    </div>
+  </div>
+  
+  <div class="nav-links">
+    <button class="active" onclick="go('home',this)">首頁</button>
+    <button onclick="go('info',this)">大會資訊</button>
+    <button onclick="go('contest',this)">競賽資訊</button>
+    <button onclick="go('score',this)">競賽結果</button>
+    <button onclick="go('signup',this)">報名</button>
+  </div>
+
+  <div class="dept-tag">中山醫學大學 醫學資訊系</div>
+</div>
+
+<!-- HOME -->
+<div id="home" class="page active">
+  <div class="hero">
+    
+    <div class="intro-box">
+      <h2>HCA GAME 28TH</h2>
+      <p>2026第28屆醫管盃於2026/05/30(六)、05/31(日)</p>
+      <p>於中山醫醫學大學舉辦</p>
+      <p>誠邀各系一同參與</p>
+      <p>躍動籃框，扣殺網前</p>
+      <p>醫管齊聚，揮灑汗水</p>
+      <p>爭奪榮耀，捨我其誰</p>
+    </div>
+
+    <div class="sticker"
+      onclick="go('signup',document.querySelectorAll('.toolbar button')[4])">
+      🎫 前往報名
+    </div>
+
+  </div>
+</div>
+
+<!-- INFO -->
+<div id="info" class="page">
+  <div class="info-container">
+    
+    <div class="info-sidebar">
+      <button class="active" onclick="subGo('calendar', this)">大會行事曆</button>
+      <button onclick="subGo('org', this)">大會組織</button>
+      <button onclick="subGo('news', this)">大會公告</button>
+      <button onclick="subGo('sponsor', this)">贊助商介紹</button>
+    </div>
+
+    <div class="info-content card">
+      
+      <div id="calendar" class="sub-page active">
+          <h2>📅 大會行事曆</h2>
+          <p style="color: var(--blue); font-weight: 700; margin-bottom: 20px;">
+              第28屆醫管盃將於 2026/05/30 (六)、2026/05/31 (日) 舉辦
+          </p>
+          <iframe
+            src="https://calendar.google.com/calendar/embed?src=580ec92e9e31cc37445908ddf70133d01a91bfe336f8c4591ac13fec0242b027%40group.calendar.google.com&ctz=Asia%2FTaipei"
+            style="border-width:0" 
+            width="100%" 
+            height="500" 
+            frameborder="0" 
+            scrolling="no">
+          </iframe>
+      </div>
+
+      <div id="org" class="sub-page">
+        <h2>👥 大會組織</h2>
+        
+        <section class="org-section">
+          <h3>大會現行主要組織成員</h3>
+          
+          <ul style="list-style: none; padding-left: 0; line-height: 1.8;">
+            <li><strong>總召：</strong>陳家弘</li>
+            <li><strong>副召：</strong>林可婕、王孝軒</li>
+          </ul>
+
+          <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
+
+          <div class="contact-info">
+            <p>聯絡請洽信箱或社群管道：</p>
+            <p>📧 <strong>信箱：</strong>2026hca@gmail.com</a></p>
+            <p>📱 <strong>社群：</strong>@2026hca.game</p>
+          </div>
+        </section>
+      </div>
+
+      <div id="news" class="sub-page">
+        <h2>📢 大會公告</h2>
+        <p>最新的比賽變動與重要通知將顯示於此。</p>
+      </div>
+
+      <div id="sponsor" class="sub-page">
+        <h2>🤝 贊助商介紹</h2>
+        <p>感謝各界對第28屆醫管盃的支持。</p>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- CONTEST -->
+<div id="contest" class="page">
+  <div class="info-container">
+    
+    <div class="info-sidebar">
+      <button class="active" onclick="subGoContest('rule-content', this)">競賽章程</button>
+      <button onclick="subGoContest('schedule', this)">各項賽程</button>
+      <button onclick="subGoContest('ball', this)">指定用球</button>
+      <button onclick="subGoContest('venue', this)">場館資訊</button>
+      <button onclick="subGoContest('insurance', this)">保險資訊</button>
+    </div>
+
+    <div class="info-content card" style="text-align: left; max-height: 80vh; overflow-y: auto;">
+      
+      <div id="rule-content" class="contest-sub-page active">
+        <h2 style="text-align: center; border-bottom: 2px solid var(--blue); padding-bottom: 10px;">第28屆醫管盃 競賽章程</h2>
+        
+        <section>
+          <h3>壹、盃賽總則</h3>
+          <p class="last-update">最後更新日期：2026-03-06</p>
+          <p><strong>一、 活動名稱：</strong>第二十八屆全國大專院校醫管盃</p>
+          <p><strong>二、 主辦單位：</strong>中山醫醫學大學 醫學資訊學系</p>
+          <p><strong>三、 比賽日期：</strong>115 年 5 月 30 日、115 年 5 月 31 日（星期六、日），共兩天。</p>
+          <p><strong>四、 比賽地點及大會裁判：</strong><br>
+            (一) 比賽地點：<br>
+            05/30 (六) 籃球 / 排球：中山醫醫學大學風雨球場<br>
+            05/31 (日) 籃球 / 排球：中山醫醫學大學風雨球場<br>
+            (二) 大會裁判：由主辦單位聘請合格裁判。
+          </p>
+          <p><strong>五、 報名辦法：</strong><br>
+            (一) 報名日期：即日起至 115 年 3 月 25 日 (三) 23:59 止。<br><br>
+            (二) 資格限制：同系所(含研究所)在學學生，或該系所畢業生，不開放跨系跨校聯隊。
+          </p>
+          <p><strong>六、 領隊會議：</strong>一領 115/03/07(六)、二領 114/04/28(六)。</p>
+          <p><strong>七、 參賽資格：</strong>含畢業生認定標準（111年6月後畢業）及體保生定義（詳見全文）。</p>
+        </section>
+
+        <hr style="margin: 30px 0;">
+
+        <section>
+          <h3>貳、 競賽規章</h3>          
+          <h4>一、 籃球</h4>
+          <ul>
+            <li>人員規定：各隊限報 15 人，體保生限 1 名，每場登錄 12 人。</li>
+            <li>比賽用球：molten BGR7D (男籃)、molten BGR6D (女籃)。</li>
+            <li>制度：四節制（每節 10 分鐘），除冠亞賽外不停錶。</li>
+          </ul>
+
+          <h4>二、 排球</h4>
+          <ul>
+            <li>人員規定：各隊限報 15 人，體保生限 2 名，每場登錄 12 人(至多一名體保生)。</li>
+            <li>比賽用球：Conti V700。</li>
+            <li>制度：三戰兩勝制，25/25/15分。</li>
+          </ul>
+
+        </section>
+
+        <hr style="margin: 30px 0;">
+
+        <section>
+          <h3>參、 注意事項</h3>
+          <p><strong>一、 報到檢錄流程：</strong>需攜帶學生證及第二證件。比賽前 10 分鐘未報到以棄權論。</p>
+          <p><strong>二、 保證金規範：</strong>每隊 1000 元。違反棄賽、代打、辱罵裁判等行為將全額沒收。</p>
+          <p><strong>三、 記點規範：</strong>未派代表參加領隊會議或閉幕式將進行記點，滿額扣除保證金。</p>
+          <p><strong>四、 其他：</strong>含公共意外責任險資訊與緊急事故處理程序。</p>
+        </section>
+
+        <hr style="margin: 30px 0;">
+
+        <section>
+          <h3>附錄：本次競賽章程</h3>
+          <p>請點此下載</p>
+        </section>
+
+      </div>
+
+    <div id="schedule" class="contest-sub-page"><h2>🏆 各項賽程</h2><p>賽程抽籤後將在此更新。</p></div>
+    <div id="ball" class="contest-sub-page"><h2>🏐 指定用球</h2><p>請參考競賽章程中各項目之說明。</p></div>
+    <div id="venue" class="contest-sub-page">
+      <h2 style="border-bottom: 2px solid var(--blue); padding-bottom: 10px;">📍 場館資訊</h2>
+      
+      <div style="background: rgba(255,255,255,0.6); padding: 20px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05);">
+        <h3 style="color: var(--red); margin-top: 0;">中山醫學大學 風雨球場</h3>
+        <p style="font-size: 16px; margin-bottom: 15px;">
+          🏠 <b>地點：</b>台中市南區建國北路一段110號 (校本部風雨球場)
+        </p>
+        
+        <div style="width: 100%; overflow: hidden; border-radius: 10px; border: 2px solid white;">
+          <iframe 
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3641.3719114704176!2d120.64866387588371!3d24.12359737397984!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x34693db040683057%3A0xc3f173f4e2f891b0!2z5Lit5bGx6Yar5a245aSn5a246aio5pys6YOo!5e0!3m2!1szh-TW!2stw!4v1700000000000!5m2!1szh-TW!2stw" 
+            width="100%" 
+            height="450" 
+            style="border:0;" 
+            allowfullscreen="" 
+            loading="lazy" 
+            referrerpolicy="no-referrer-when-downgrade">
+          </iframe>
+        </div>
+        
+        <p style="margin-top: 15px; font-size: 14px; color: #666;">
+          💡 <i>提示：球場位於校園內，建議由建國北路校門口進入。</i>
+        </p>
+      </div>
+    </div>
+    <div id="insurance" class="contest-sub-page"><h2>🛡️ 保險資訊</h2><p>公共意外責任險內容請見規章內容。</p></div>
+
+    </div>
+  </div>
+</div>
+
+<!-- SCORE -->
+<div id="score" class="page">
+  <div class="card">
+    <h2>🏆 競賽成績</h2>
+    <p>尚無比賽成果</p>
+  </div>
+</div>
+
+<!-- SIGN UP -->
+<div id="signup" class="page">
+  <div class="ticket">
+    <div class="swipe-hint">⬆️ 上滑開始填寫 ⬆️</div>
+
+    <div id="swipeBox" class="swipe-box">
+      <p><b>活動：</b>第二十八屆全國大專院校醫管盃</p>
+      <p><b>比賽日期：</b>2026 / 5 / 31 – 6 / 01</p>
+
+      <hr>
+      <iframe
+        src="https://docs.google.com/forms/d/e/1FAIpQLScFp3azWIo0AtBwRgvYs2iAIsE1HLoafq6H-syweonVnJltCg/viewform?embedded=true"
+        height="900"></iframe>
+    </div>
+  </div>
+</div>
+<script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
+<script>
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyD3YIXh6APy4POzfTRVx8pUKW6wGYvdzvU",
+  authDomain: "hca-bccf5.firebaseapp.com",
+  databaseURL: "https://hca-bccf5-default-rtdb.firebaseio.com",
+  projectId: "hca-bccf5",
+  storageBucket: "hca-bccf5.firebasestorage.app",
+  messagingSenderId: "374481779428",
+  appId: "1:374481779428:web:adec710f7a7f95ae490af1",
+  measurementId: "G-YTR8DRBZEK"
+};
+
+// 初始化 Firebase
+const app = firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+// --- 功能 1: 自動抓取大會公告 ---
+function loadNews() {
+  const newsRef = db.ref('news');
+  const newsContainer = document.querySelector('#news');
+  
+  newsRef.on('value', (snapshot) => {
+    const data = snapshot.val();
+    let htmlContent = '<h2>📢 大會公告</h2>';
+    
+    if (data) {
+      Object.keys(data).reverse().forEach(key => {
+        const item = data[key];
+        htmlContent += `
+          <div class="news-item" style="background: white; padding: 15px; border-radius: 10px; margin-bottom: 15px; border-left: 5px solid var(--red); text-align: left;">
+            <small style="color: #888;">${item.date || ''}</small>
+            <h3 style="margin: 5px 0; color: var(--blue);">${item.title || ''}</h3>
+            <p style="margin: 0; line-height: 1.6;">${item.content || ''}</p>
+          </div>
+        `;
+      });
+    } else {
+      htmlContent += '<p>目前尚無公告。</p>';
+    }
+    newsContainer.innerHTML = htmlContent;
+  });
+}
+
+// --- 功能 2: 主分頁切換 (首頁、大會資訊等) ---
+function go(id, btn) {
+  // 隱藏所有頁面
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  // 顯示目標頁面
+  document.getElementById(id).classList.add('active');
+  // 更新按鈕狀態
+  document.querySelectorAll('.nav-links button').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  // 滾回頂部
+  window.scrollTo(0, 0);
+}
+
+// --- 功能 3: 大會資訊子分頁切換 ---
+function subGo(id, btn) {
+  document.querySelectorAll('#info .sub-page').forEach(p => p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.info-sidebar button').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+// --- 功能 4: 競賽資訊子分頁切換 ---
+function subGoContest(id, btn) {
+  document.querySelectorAll('#contest .contest-sub-page').forEach(p => p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  const sidebar = btn.parentElement;
+  sidebar.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+// --- 功能 5: 報名表單上滑解鎖 ---
+document.addEventListener('DOMContentLoaded', () => {
+  const swipeBox = document.getElementById('swipeBox');
+  if (swipeBox) {
+    swipeBox.addEventListener('click', () => {
+      swipeBox.classList.add('open');
+      const hint = document.querySelector('.swipe-hint');
+      if (hint) hint.style.display = 'none';
+    });
+  }
+});
+function loadSchedules() {
+  const scheduleRef = db.ref('schedules');
+  const container = document.querySelector('#schedule');
+  
+  scheduleRef.on('value', (snapshot) => {
+    const data = snapshot.val();
+    let htmlContent = '<h2>🏆 各項賽程</h2>';
+    
+    if (data) {
+      Object.keys(data).sort().forEach(key => {
+        const item = data[key];
+        
+        // 處理表格邏輯
+        let tableHtml = '';
+        if (item.tableData) {
+          tableHtml = '<table style="width:100%; border-collapse:collapse; margin-top:15px; background:white; border-radius:8px; overflow:hidden;">';
+          const rows = item.tableData.split('|');
+          rows.forEach((row, index) => {
+            const cols = row.split(',');
+            const tag = (index === 0) ? 'th' : 'td'; // 第一行為標題
+            const bg = (index === 0) ? 'background:var(--blue); color:white;' : 'border-bottom:1px solid #eee;';
+            
+            tableHtml += '<tr>';
+            cols.forEach(col => {
+              tableHtml += `<${tag} style="padding:12px; text-align:center; ${bg}">${col}</${tag}>`;
+            });
+            tableHtml += '</tr>';
+          });
+          tableHtml += '</table>';
+        }
+
+        htmlContent += `
+          <div class="schedule-card" style="background:rgba(255,255,255,0.6); padding:20px; border-radius:15px; margin-bottom:30px; border-left:8px solid var(--blue); box-shadow:0 5px 15px rgba(0,0,0,0.05);">
+            <h3 style="color:var(--red); font-size:1.6em; margin-top:0;">${item.title}</h3>
+            <p style="margin:5px 0;">📍 <b>場地：</b>${item.venue}</p>
+            <p style="margin:5px 0;">📝 <b>賽制：</b>${item.format}</p>
+            <div style="overflow-x:auto;">${tableHtml}</div>
+          </div>
+        `;
+      });
+    } else {
+      // 如果資料庫是空的，顯示預設文字
+      htmlContent += `
+        <div style="text-align:center; padding:50px; opacity:0.6;">
+          <p style="font-size:20px;">📅 賽程抽籤後將在此更新</p>
+        </div>`;
+    }
+    container.innerHTML = htmlContent;
+  });
+}
+function loadScores() {
+  const scoreRef = db.ref('scores');
+  const container = document.querySelector('#score');
+  
+  scoreRef.on('value', (snapshot) => {
+    const data = snapshot.val();
+    let htmlContent = '<h2>🏆 競賽結果</h2>';
+    
+    if (data) {
+      Object.keys(data).sort().forEach(key => {
+        const item = data[key];
+        
+        // 輔助函式：將字串轉為表格 HTML
+        const makeTable = (title, str) => {
+          if (!str) return '';
+          let t = `<h4 style="margin:10px 0 5px 0; color:var(--blue);">${title}</h4>`;
+          t += '<table style="width:100%; border-collapse:collapse; background:white; font-size:14px; margin-bottom:15px;">';
+          const rows = str.split('|');
+          rows.forEach((row, i) => {
+            const cols = row.split(',');
+            const tag = (i === 0) ? 'th' : 'td';
+            const bg = (i === 0) ? 'background:#eee;' : 'border-bottom:1px solid #eee;';
+            t += '<tr>';
+            cols.forEach(c => t += `<${tag} style="padding:8px; text-align:center; ${bg}">${c}</${tag}>`);
+            t += '</tr>';
+          });
+          return t + '</table>';
+        };
+
+        htmlContent += `
+          <div class="score-card" style="background:var(--card); padding:20px; border-radius:15px; margin-bottom:30px; display:flex; gap:20px; flex-wrap:wrap; box-shadow:0 5px 15px rgba(0,0,0,0.1);">
+            <div style="flex:1; min-width:300px;">
+              <h3 style="color:var(--red); margin-top:0; border-bottom:2px solid var(--blue);">${item.title || '讀取中...'}</h3>
+              ${makeTable('🏐 預賽階段', item.preData || '')}
+              ${makeTable('🥇 複賽/決賽階段', item.finalData || '')}
+            </div>
+            
+            <div style="flex:1; min-width:300px; display:flex; align-items:center; justify-content:center;">
+              <img src="${item.img || 'https://via.placeholder.com/400x300?text=Result+Image'}" 
+                   style="width:100%; border-radius:10px; object-fit:cover; border:2px solid white;">
+            </div>
+          </div>
+        `;
+      });
+    } else {
+      htmlContent += '<p>目前尚無比賽成果。</p>';
+    }
+    container.innerHTML = htmlContent;
+  });
+}
+//啟動
+window.onload = function() {
+  loadNews();      // 啟動公告
+  loadSchedules(); // 啟動賽程
+  loadScores();    // 啟動競賽結果
+  
+  const calendarBtn = document.querySelector('.info-sidebar button');
+  if(calendarBtn) subGo('calendar', calendarBtn);
+};
+</script>
+</body>
+</html>
